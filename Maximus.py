@@ -5,35 +5,27 @@
 import Scraper
 import csv
 
+'''
+Interfaz: get_data(self); get_all(self); redo_data(self); search_for(self,search)
+'''
+
 class Maximus(Scraper.Scraper):
-    def __init__(self, site = "https://www.maximus.com.ar/"):
-        super().__init__(site)
+    def __init__(self):
+        super().__init__("https://www.maximus.com.ar/", True)
         with open('data.csv', mode='a', newline='') as output_file:
             data_csv = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             data_csv.writerow(['Maximus', ''])
             data_csv.writerow(['Artículo', 'Precio'])
 
-    # COND: Needs to have a page loaded.
+    # PROPÓSITO: Recibir la información de @page y guardar esa información en @product_dict.
+    # COND: @page debe tener una página.
     def get_data(self):
-        content = super().get_content("product")
-        for product in content:
-            desc = product.find('span', class_="title-prod")
-            price = product.find('div', class_="price")
-        # Add every description and every price of the products on the page
-            if not(desc.text in self.product_dict.keys()) or self.product_dict[desc.text] > price.text:
-                self.product_dict[desc.text] = price.text
+        super().get_content("product", "title-prod", "price")
 
-    def reload_on(self, site):
-        match site:
-            # Fix this 
-            case "Micros": res = "https://www.maximus.com.ar/Productos/Microprocesadores/maximus.aspx?/CAT=52/SCAT=-1/M=-1/OR=1/PAGE=1/"
-            case "Placas": res = "https://www.maximus.com.ar/Productos/Placas-De-Video/maximus.aspx?/CAT=48/SCAT=-1/M=-1/OR=1/PAGE=1/"
-            case _: res = site
-        super().reload_on(res)
-
-    # COND: Needs to have a page loaded.
+    # PROPÓSITO: Recibir toda la información relevante de la solapa donde @page está posicionada. 
+    # COND: @page debe tener una página.
     def get_all(self):
-        # Preparation for while loop
+        # Preparo el while loop
         i = 1
         checker = super().get_content("product")
         self.get_data()
@@ -44,6 +36,7 @@ class Maximus(Scraper.Scraper):
             checker = super().get_content("product")
             self.get_data() 
 
+    # PROPÓSITO: borra los datos que ya están en el csv y vuelve a escribir los titulos de la sección.
     def redo_data(self):
         Scraper.delete_data()
         with open('data.csv', mode='w', newline='') as output_file:
@@ -51,13 +44,12 @@ class Maximus(Scraper.Scraper):
             data_csv.writerow(['Maximus', ''])
             data_csv.writerow(['Artículo', 'Precio'])
 
+    # PROPÓSITO: Buscar !search en la barra de busqueda de la página.
     def search_for(self, search):
         super().search_for(search,"search-input")
 
-    '''
-        IDEA (GO_TO()):
-        CAPAZ HACER CLICK ME AHORRA TENER QUE ESPERAR QUE CARGE TODA LA PAGINA DE NUEVO
-    '''
+    ### IDEA; go_to(): moverme con los botones en la página; pienso que de esa forma no estoy cargando cada página desde 0.
+
 
 ## TESTS ##
 
