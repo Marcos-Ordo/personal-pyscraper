@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import csv
 import os
 
@@ -83,6 +83,15 @@ class Scraper:
             self.page = self.driver.page_source
         except TimeoutException:
             print("Page took way to long to load ...")
+
+    # PROPÓSITO: Describe si existe !box y sus elementos.
+    # COND: !Box debe ser el *class name* de un contenedor (div) donde estén todos los productos.
+    def check_if_data_exists(self, box):
+        try:
+            self.driver.find_element(By.CLASS_NAME, box)
+        except NoSuchElementException:
+            return False
+        return True
 
 # PROPÓSITO: borrar el csv.
 def delete_data():

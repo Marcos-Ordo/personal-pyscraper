@@ -27,14 +27,14 @@ class Maximus(Scraper.Scraper):
     def get_all(self):
         # Preparo el while loop
         i = 1
-        checker = super().get_content("product")
-        self.get_data()
+        super().get_content("product", "title-prod", "price")
+        checker = super().check_if_data_exists("product")
         while checker:
             i += 1
             site = self.actual_site[:self.actual_site.rindex("/")-1]+str(i)+"/" # Nasty!
             self.reload_on(site)
-            checker = super().get_content("product")
-            self.get_data() 
+            checker = super().check_if_data_exists("product")
+            super().get_content("product", "title-prod", "price")
 
     # PROPÓSITO: borra los datos que ya están en el csv y vuelve a escribir los titulos de la sección.
     def redo_data(self):
@@ -58,7 +58,7 @@ def test2():
     # OBJETIVO: Testear "get_all", la busqueda en dos paginas diferentes y el guardado de datos.
     m = Maximus()
     input("Press Enter to continue...")
-    m.reload_on("Micros")
+    m.reload_on("https://www.maximus.com.ar/Productos/Microprocesadores/maximus.aspx?/CAT=52/SCAT=-1/M=-1/OR=1/PAGE=1/")
     input("Press Enter to continue...")
     m.get_all()
     input("Press Enter to continue...")
