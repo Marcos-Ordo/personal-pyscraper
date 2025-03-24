@@ -97,15 +97,6 @@ class Scraper:
         except TimeoutException:
             print("Page took way to long to load ...")
 
-    # PROPÓSITO: Describe si existe !box y sus elementos.
-    # PARAMS: !Box representa el *class name* de un contenedor (div) donde estén todos los productos.
-    def check_if_data_exists(self, box):
-        try:
-            self.driver.find_element(By.CLASS_NAME, box)
-        except NoSuchElementException:
-            return False
-        return True
-
     # PROPÓSITO: Ir hasta la página siguiente haciendo click en el botón correspondiente.
     # COND: @driver debe estar en una página con un boton para ir a la siguiente.
     # PARAMS:
