@@ -40,8 +40,9 @@ class Maximus(Scraper.Scraper):
             data_csv.writerow(['Artículo', 'Precio'])
 
     # PROPÓSITO: Buscar !search en la barra de busqueda de la página.
+    # PARAMS: !search representa un string a buscar.
     def search_for(self, search):
-        super().search_for(search,"search-input")
+        super().search_for(search,'//input[@class="search-input"]')
 
 ## TESTS ##
 

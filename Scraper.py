@@ -57,10 +57,14 @@ class Scraper:
     # COND: @page debe tener una página.
     def get_content(self):
         soup = BeautifulSoup(self.page,'lxml')
+        print(soup)
         content = soup.find_all(self.page_data[1], class_=self.page_data[0])
+        #print(content)
         for product in content:
             desc_prod = product.find(self.page_data[3], class_=self.page_data[2])
+            print(desc_prod)
             price_prod = product.find(self.page_data[5], class_=self.page_data[4])
+            print(price_prod)
             # Agrega todas las descripciones nuevas junto con los precios de cada producto en @product_dict.
             if not(desc_prod.text in self.product_dict.keys()) or self.product_dict[desc_prod.text] > price_prod.text:
                 self.product_dict[desc_prod.text] = price_prod.text
@@ -75,17 +79,16 @@ class Scraper:
         self.get_content()
         self.go_to_next_page(button_xpath, button_visual_xpath)
         while site != self.driver.current_url :
-            sleep(3)
             site = self.driver.current_url
             self.get_content()
             self.go_to_next_page(button_xpath, button_visual_xpath)
             
     # PROPÓSITO: Buscar !search en la barra de busqueda !box.
     # PARAMS: 
-    # - !Box representa el *class name* de la barra de busqueda.
+    # - !searchbox_xpath representa el *xpath* de la barra de busqueda.
     # - !search representa un string de lo que se quiere buscar.
-    def search_for(self, search, searchbox_name):
-        search_bar = self.driver.find_element(By.CLASS_NAME, searchbox_name)
+    def search_for(self, search, searchbox_xpath):
+        search_bar = self.driver.find_element(By.XPATH, searchbox_xpath)
         search_bar.send_keys(search)
         search_bar.send_keys(Keys.ENTER)
         try:
