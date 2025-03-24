@@ -42,7 +42,7 @@ class Scraper:
     def destroy(self):
         self.driver.close()
 
-    # PROPÓSITO: Mostar los datos que tiene guardados @product_dict.
+    # PROPÓSITO: Mostar los datos que tiene guardados @product_dict por consola.
     def show_data(self):
         print(self.product_dict)
 
@@ -57,14 +57,10 @@ class Scraper:
     # COND: @page debe tener una página.
     def get_content(self):
         soup = BeautifulSoup(self.page,'lxml')
-        print(soup)
         content = soup.find_all(self.page_data[1], class_=self.page_data[0])
-        #print(content)
         for product in content:
             desc_prod = product.find(self.page_data[3], class_=self.page_data[2])
-            print(desc_prod)
             price_prod = product.find(self.page_data[5], class_=self.page_data[4])
-            print(price_prod)
             # Agrega todas las descripciones nuevas junto con los precios de cada producto en @product_dict.
             if not(desc_prod.text in self.product_dict.keys()) or self.product_dict[desc_prod.text] > price_prod.text:
                 self.product_dict[desc_prod.text] = price_prod.text
