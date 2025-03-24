@@ -6,6 +6,7 @@ import Scraper
 import csv
 
 MICROS = "https://compragamer.com/productos?agrup=7"
+PLACAS = "https://compragamer.com/productos?agrup=2"
 
 '''
 Interfaz: redo_data(self); search_for(self,search)
@@ -13,7 +14,7 @@ Interfaz: redo_data(self); search_for(self,search)
 
 class Compra(Scraper.Scraper):
     def __init__(self):
-        super().__init__("https://compragamer.com/", False)
+        super().__init__("https://compragamer.com/", True)
         with open('data.csv', mode='a', newline='') as output_file:
             data_csv = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             data_csv.writerow(['Compragamer', ''])

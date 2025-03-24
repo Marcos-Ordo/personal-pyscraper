@@ -13,10 +13,9 @@ Interfaz: reload_on(self,site); destroy(self); show_data(self); save_data(self);
 '''
 
 class Scraper:
-    product_dict = {}
-    page_data = [] # [0,1] = Box; [2,3] = Description; [4,5] = Price
-
     def __init__(self, site, hide_gui: bool):
+        self.product_dict = {}
+        self.page_data = [] # [0,1] = Box; [2,3] = Description; [4,5] = Price
         self.options = Options()
         if hide_gui:
             # Esconder GUI.

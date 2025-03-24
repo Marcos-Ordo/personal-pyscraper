@@ -6,6 +6,7 @@ import Scraper
 import csv
 
 MICROS = "https://www.maximus.com.ar/Productos/Microprocesadores/maximus.aspx?/CAT=52/SCAT=-1/M=-1/OR=1/PAGE=1/"
+PLACAS = "https://www.maximus.com.ar/Productos/Placas-De-Video/maximus.aspx?/CAT=48/SCAT=-1/M=-1/OR=1/PAGE=1/"
 
 '''
 Interfaz: get_all(self); redo_data(self); search_for(self,search)
@@ -13,7 +14,7 @@ Interfaz: get_all(self); redo_data(self); search_for(self,search)
 
 class Maximus(Scraper.Scraper):
     def __init__(self):
-        super().__init__("https://www.maximus.com.ar/", False)
+        super().__init__("https://www.maximus.com.ar/", True)
         # Genero el csv donde guardar la información más tarde.
         with open('data.csv', mode='a', newline='') as output_file:
             data_csv = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
