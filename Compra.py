@@ -13,8 +13,8 @@ Interfaz: redo_data(self); search_for(self,search)
 '''
 
 class Compra(Scraper.Scraper):
-    def __init__(self):
-        super().__init__("https://compragamer.com/", True)
+    def __init__(self, hide_gui : bool = True):
+        super().__init__("https://compragamer.com/", hide_gui)
         with open('data.csv', mode='a', newline='') as output_file:
             data_csv = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             data_csv.writerow(['Compragamer', ''])

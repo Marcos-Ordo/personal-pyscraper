@@ -13,8 +13,8 @@ Interfaz: get_all(self); redo_data(self); search_for(self,search)
 '''
 
 class Maximus(Scraper.Scraper):
-    def __init__(self):
-        super().__init__("https://www.maximus.com.ar/", True)
+    def __init__(self, hide_gui : bool = True):
+        super().__init__("https://www.maximus.com.ar/", hide_gui)
         # Genero el csv donde guardar la información más tarde.
         with open('data.csv', mode='a', newline='') as output_file:
             data_csv = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)

@@ -4,12 +4,22 @@ from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import csv
 import os
 
 '''
-Interfaz: reload_on(self,site); destroy(self); show_data(self); save_data(self); get_content(self,box,description,price); search_for(self,search,box); delete_data()
+Interfaz: 
+    reload_on(self,site);
+    destroy(self); 
+    show_data(self); 
+    save_data(self); 
+    get_content(self,box,description,price); 
+    search_for(self,search,box); 
+    existsNextPage(self,)
+    delete_data();
 '''
 
 class Scraper:
@@ -34,7 +44,6 @@ class Scraper:
     # PARAMS: !site representa una url.
     def reload_on(self, site):
         self.driver.get(site)
-        sleep(3)
         self.page = self.driver.page_source
 
     # PROPÓSITO: Destruir la instancia de la página.
@@ -70,13 +79,10 @@ class Scraper:
     # - !button_xpath representa el *xpath* del botón para ir a la siguiente página.
     # - !button_visual_xpath (OPCIONAL) representa el *xpath* de algún elemento previo para que !button_xpath sea visible.
     def get_all(self, button_xpath, button_visual_xpath = None):
-        site = self.driver.current_url
         self.get_content()
-        self.go_to_next_page(button_xpath, button_visual_xpath)
-        while site != self.driver.current_url :
-            site = self.driver.current_url
-            self.get_content()
+        while self.existsNextPage(button_xpath):
             self.go_to_next_page(button_xpath, button_visual_xpath)
+            self.get_content()
             
     # PROPÓSITO: Buscar !search en la barra de busqueda !box.
     # PARAMS: 
@@ -87,10 +93,10 @@ class Scraper:
         search_bar.send_keys(search)
         search_bar.send_keys(Keys.ENTER)
         try:
-            sleep(3)
+            WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((By.XPATH, searchbox_xpath)))
             self.page = self.driver.page_source
         except TimeoutException:
-            print("Page took way to long to load ...")
+            print("Error TimeoutException ...")
 
     # PROPÓSITO: Ir hasta la página siguiente haciendo click en el botón correspondiente.
     # COND: @driver debe estar en una página con un boton para ir a la siguiente.
@@ -98,15 +104,27 @@ class Scraper:
     # - !button_xpath representa el *xpath* del botón para ir a la siguiente página.
     # - !button_visual_xpath (OPCIONAL) representa el *xpath* de algún elemento previo para que !button_xpath sea visible.
     def go_to_next_page(self, button_xpath: str, button_visual_xpath = None):
-        next_page = self.driver.find_element(By.XPATH, button_xpath)
-        if button_visual_xpath != None:
-            scroll_element = self.driver.find_element(By.XPATH, button_visual_xpath)
-            self.driver.execute_script("arguments[0].scrollIntoView();", scroll_element)
-        else:
-            self.driver.execute_script("arguments[0].scrollIntoView();", next_page)
-        sleep(1.5)
-        next_page.click()
-        sleep(1.5)
+        
+        try:
+            if button_visual_xpath != None:
+                scroll_element = self.driver.find_element(By.XPATH, button_visual_xpath)
+                self.driver.execute_script("arguments[0].scrollIntoView();", scroll_element)
+            else:
+                next_page = self.driver.find_element(By.XPATH, button_xpath)
+                self.driver.execute_script("arguments[0].scrollIntoView();", next_page)
+            WebDriverWait(self.driver, 5).until(EC.visibility_of_element_located((By.XPATH, button_xpath))).click()
+        except TimeoutException:
+            print("Error TimeoutException ...")
+
+    # PROPÓSITO: Describe si existe una página siguiente mediante un elemento.
+    # COND: !element_xpath debe existir en @page.
+    # PARAMS: !element_xpath representa el elemento a chequear.
+    def existsNextPage(self, element_xpath) :
+        try:
+            self.driver.find_element(By.XPATH, element_xpath)
+            return True
+        except NoSuchElementException:
+            return False
 
 # PROPÓSITO: borrar el csv.
 def delete_data():
