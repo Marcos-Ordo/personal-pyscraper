@@ -2,7 +2,7 @@
     Target page: https://www.maximus.com.ar/
 '''
 
-import Scraper
+from . import Scraper
 import csv
 
 MICROS = "https://www.maximus.com.ar/Productos/Microprocesadores/maximus.aspx?/CAT=52/SCAT=-1/M=-1/OR=1/PAGE=1/"

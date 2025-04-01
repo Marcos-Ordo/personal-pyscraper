@@ -2,35 +2,35 @@
 # from tkinter import * 
 # from tkinter.ttk import *
 
-from scraper import init
+from scraper import *
 from tkinter import *
 import customtkinter
 
 ## DEFS:
 def info_gpus_en_(page, show):
     if page == "Todo" or page == "Compragamer":
-        o_compra = init.Compra(show)
-        o_compra.reload_on(init.PLACAS)
+        o_compra = Compra.Compra(show)
+        o_compra.reload_on(Compra.PLACAS)
         o_compra.get_content()
         o_compra.save_data()
         o_compra.destroy()
     if page == "Todo" or page == "Maximus":
-        o_maximus = init.Maximus(show)
-        o_maximus.reload_on(init.PLACAS)
+        o_maximus = Maximus.Maximus(show)
+        o_maximus.reload_on(Maximus.PLACAS)
         o_maximus.get_all()
         o_maximus.save_data()
         o_maximus.destroy()
 
 def info_cpus_en_(page, show):
     if page == "Todo" or page == "Compragamer":
-        o_compra = init.Compra(show)
-        o_compra.reload_on(init.MICROS)
+        o_compra = Compra.Compra(show)
+        o_compra.reload_on(Compra.MICROS)
         o_compra.get_content()
         o_compra.save_data()
         o_compra.destroy()
     if page == "Todo" or page == "Maximus":
-        o_maximus = init.Maximus(show)
-        o_maximus.reload_on(init.MICROS)
+        o_maximus = Maximus.Maximus(show)
+        o_maximus.reload_on(Maximus.MICROS)
         o_maximus.get_all()
         o_maximus.save_data()
         o_maximus.destroy()
@@ -41,13 +41,13 @@ def info_todo_en_(page, show):
 
 def buscar_en_(search, page, show):
     if page == "Todo" or page == "Compragamer":
-        o_compra = init.Compra(show)
+        o_compra = Compra.Compra(show)
         o_compra.search_for(search)
         o_compra.get_content()
         o_compra.save_data()
         o_compra.destroy()
     if page == "Todo" or page == "Maximus":
-        o_maximus = init.Maximus(show)
+        o_maximus = Maximus.Maximus(show)
         o_maximus.search_for(search)
         o_maximus.get_all()
         o_maximus.save_data()

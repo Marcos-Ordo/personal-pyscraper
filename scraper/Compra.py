@@ -2,7 +2,7 @@
     target page: https://compragamer.com/
 '''
 
-import Scraper
+from . import Scraper
 import csv
 
 MICROS = "https://compragamer.com/productos?agrup=7"
