@@ -1,5 +1,4 @@
 from selenium.webdriver.common.keys import Keys
-from time import sleep
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -9,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import csv
 import os
-
+from time import sleep
 '''
 Interfaz: 
     reload_on(self,site);
@@ -67,18 +66,17 @@ class Scraper:
         soup = BeautifulSoup(self.page,'lxml')
         content = soup.find_all(self.page_data[1], class_=self.page_data[0])
         for product in content:
-            desc_prod = product.find(self.page_data[3], class_=self.page_data[2])
-            price_prod = product.find(self.page_data[5], class_=self.page_data[4])
+            desc_prod = product.find(self.page_data[3], class_=self.page_data[2]).text
+            price_prod = product.find(self.page_data[5], class_=self.page_data[4]).text
             # Agrega todas las descripciones nuevas junto con los precios de cada producto en @product_dict.
-            if not(desc_prod.text in self.product_dict.keys()) or self.product_dict[desc_prod.text] > price_prod.text:
-                self.product_dict[desc_prod.text] = price_prod.text
+            if not(desc_prod in self.product_dict.keys()) or self.product_dict[desc_prod] > price_prod:
+                self.product_dict[desc_prod] = price_prod
 
-    # PROPÓSITO: Recibir toda la información relevante de la solapa donde @page está posicionada. 
-    # COND: @driver debe estar en una página con la información de *button_xpath*.
+    # PROPÓSITO: Recibir toda la información relevante de la solapa donde @page está posicionada.
     # PARAMS:
     # - !button_xpath representa el *xpath* del botón para ir a la siguiente página.
     # - !button_visual_xpath (OPCIONAL) representa el *xpath* de algún elemento previo para que !button_xpath sea visible.
-    def get_all(self, button_xpath, button_visual_xpath = None):
+    def get_all(self, button_xpath = None, button_visual_xpath = None):
         self.get_content()
         while self.existsNextPage(button_xpath):
             self.go_to_next_page(button_xpath, button_visual_xpath)
@@ -112,18 +110,17 @@ class Scraper:
             else:
                 next_page = self.driver.find_element(By.XPATH, button_xpath)
                 self.driver.execute_script("arguments[0].scrollIntoView();", next_page)
-            WebDriverWait(self.driver, 5).until(EC.visibility_of_element_located((By.XPATH, button_xpath))).click()
+            WebDriverWait(self.driver, 5).until(EC.element_to_be_clickable((By.XPATH, button_xpath))).click()
         except TimeoutException:
             print("Error TimeoutException ...")
 
     # PROPÓSITO: Describe si existe una página siguiente mediante un elemento.
-    # COND: !element_xpath debe existir en @page.
     # PARAMS: !element_xpath representa el elemento a chequear.
     def existsNextPage(self, element_xpath) :
         try:
             self.driver.find_element(By.XPATH, element_xpath)
             return True
-        except NoSuchElementException:
+        except:
             return False
 
 # PROPÓSITO: borrar el csv.
