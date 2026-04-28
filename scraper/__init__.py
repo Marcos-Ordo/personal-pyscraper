@@ -1,4 +1,4 @@
 __all__ = ["Compra", "Maximus"]
 
-from . import Compra
-from . import Maximus
+from scraper.Compra  import *
+from scraper.Maximus import *
