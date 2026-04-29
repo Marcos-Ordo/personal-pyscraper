@@ -2,19 +2,11 @@ from abc import ABC, abstractmethod
 
 class ProductScraper(ABC):
 
-    def __init__(self, id):
-        self.__id = id
-
-    @property
-    def id(self):
-        return self.__id
-    
-    @id.setter
-    def id(self, id):
-        self.__id = id
+    def __init__(self):
+        pass
     
     @abstractmethod
-    def scrap(self) -> dict:
+    def scrap(self, id):
         """
         PROP: Esta función retorna una tupla con el nombre del producto y su precio.
         PREC: 
