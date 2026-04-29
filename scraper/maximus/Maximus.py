@@ -3,8 +3,7 @@
 import requests
 import json
 
-from scraper.ProductScraper                   import ProductScraper
-from scraper.Scraper                          import Scraper
+from scraper.Scraper                          import Scraper, ProductScraper
 from scraper.maximus.MaximusSearchingStrategy import MaximusSearchingCPUs, MaximusSearchingGPUs, MaximusSearchByMessage
 
 HOME   = "https://www.maximus.com.ar/"

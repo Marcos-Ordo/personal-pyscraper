@@ -1,13 +1,6 @@
-'''
-    target page: https://compragamer.com/
-
-    Interfaz: 
-        redo_data(self); 
-        search_for(self,search)
-'''
+# target website: https://compragamer.com/
 
 from scraper.Scraper import *
-# import csv
 
 HOME   = "https://www.compragamer.com/"
 MICROS = "https://www.compragamer.com/productos?agrup=7"
@@ -16,17 +9,9 @@ PLACAS = "https://www.compragamer.com/productos?agrup=2"
 class Compra(Scraper):
     def __init__(self):
         super().__init__()
-        
-        # with open('data.csv', mode='a', newline='') as output_file:
-        #     data_csv = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        #     data_csv.writerow(['Compragamer', ''])
-        #     data_csv.writerow(['Artículo', 'Precio'])
-        # Guardo en page_data la información que voy a utilizar.
 
-    def search_gpus(self):
-        raise NotImplementedError
-
-    def search_cpus(self):
-        raise NotImplementedError
+    @abstractmethod
+    def changeStratTo(self, strategy):
+        pass
 
 

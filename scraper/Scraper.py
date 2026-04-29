@@ -32,6 +32,22 @@ class Scraper():
     def changeStratTo(self, strategy):
         pass
 
+
+class ProductScraper(ABC):
+    """
+    Esta clase define un unico metodo para scrapear un unico producto.
+    """
+    def __init__(self):
+        pass
+    
+    @abstractmethod
+    def scrap(self, id):
+        """
+        PROP: Esta función retorna una tupla con el nombre del producto y su precio apartir de la "target website".
+        """
+        pass
+
+
 class Item:
     """
     Esta clase es un wrapper, lo hice para que 2 items puedan compararse por igualdad, asi pueda ponerlos de forma segura en un set.
