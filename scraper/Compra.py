@@ -23,5 +23,10 @@ class Compra(Scraper):
         #     data_csv.writerow(['Artículo', 'Precio'])
         # Guardo en page_data la información que voy a utilizar.
 
-    def __scrap_product_with_id(self, id):
-        pass
+    def search_gpus(self):
+        raise NotImplementedError
+
+    def search_cpus(self):
+        raise NotImplementedError
+
+
