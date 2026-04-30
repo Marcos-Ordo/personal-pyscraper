@@ -1,2 +1,2 @@
-from scraper.Compra  import *
+from scraper.compra  import *
 from scraper.maximus import *

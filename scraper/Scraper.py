@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class Scraper():
+class Scraper(ABC):
     '''
     Esta clase define la propiedad de la memoria de un scraper y la logica para redireccionar una busqueda:
     Metodos: 
@@ -29,22 +29,19 @@ class Scraper():
         self.searchingStrategy.search(msg)
 
     @abstractmethod
-    def changeStratTo(self, strategy):
+    def change_strat_to(self, strategy) -> None:
         pass
 
 
 class ProductScraper(ABC):
     """
-    Esta clase define un unico metodo para scrapear un unico producto.
+    Esta clase abstracta define un unico metodo para scrapear un unico producto.
     """
     def __init__(self):
         pass
     
     @abstractmethod
-    def scrap(self, id):
-        """
-        PROP: Esta función retorna una tupla con el nombre del producto y su precio apartir de la "target website".
-        """
+    def scrap(self, id) -> Item | None:
         pass
 
 
@@ -52,21 +49,32 @@ class Item:
     """
     Esta clase es un wrapper, lo hice para que 2 items puedan compararse por igualdad, asi pueda ponerlos de forma segura en un set.
     Es una clase sin metodos, solo tiene propiedades.
+    Propiedades:
+        * eq: define la igualdad con el atributo "id_type".
+        * hash: define como se puede hashear a un valor unico.
+        * repr: define como se representa en la terminal.
+        * id_type: define el tipo de id que va a utilizar para compararse.
+        * value: define el valor que esta envolviendo.
     """
-    def __init__(self, value):
-        self.__value = value
+    def __init__(self, value, id_type):
+        self.__id_type = id_type
+        self.__value   = value
 
     def __eq__(self, other):
         if not isinstance(other, Item):
             return False
-        return self.__value['item_id'] == other.__value['item_id']
+        return self.__value[self.__id_type] == other.value[other.id_type]
 
     def __hash__(self):
-        return hash(self.__value['item_id'])
+        return hash(self.__value[self.__id_type])
 
     def __repr__(self):
-        return f"ById({self.__value})"
+        return f"Item({self.__value})"
     
+    @property
+    def id_type(self):
+        return self.__id_type
+
     @property
     def value(self):
         return self.__value
@@ -90,6 +98,7 @@ class SearchingStrategy(ABC):
     @abstractmethod
     def search(self, msg):
         pass
+
 
 class EmptySearchingStrategy(SearchingStrategy):
     """

@@ -30,7 +30,7 @@ class ProductScraperTest(unittest.TestCase):
 
         self.assertEqual(self.adapter.request({}, self.session), "Success")
 
-    def test002_CuandoElAdapterIntentaHacerUnaRequestYPuedePeroElJSonCambia_RetornaNone(self):
+    def test002_CuandoElAdapterIntentaHacerUnaRequestYNoPuedePorElJson_RetornaNone(self):
         self.cookies.append(self.cookie0)
         self.session.cookies           = self.cookies
         self.session.post.return_value = self.response
@@ -39,20 +39,18 @@ class ProductScraperTest(unittest.TestCase):
 
         self.assertEqual(self.adapter.request({}, self.session), None)
 
-    def test003_CuandoElAdapterIntentaHacerUnaRequestYNoPuedePorLasCookies_RetornaUnaExcepcion(self):
+    def test003_CuandoElAdapterIntentaHacerUnaRequestYNoPuedePorLasCookies_RetornaNone(self):
         self.session.cookies = self.cookies
 
-        with self.assertRaises(Exception):
-            self.adapter.request({}, self.session)
+        self.assertEqual(self.adapter.request({}, self.session), None)
 
-    def test004_CuandoElAdapterIntentaHacerUnaRequestYNoPuedePorLaConexion_RetornaUnaExcepcion(self):
+    def test004_CuandoElAdapterIntentaHacerUnaRequestYNoPuedePorLaConexion_RetornaNone(self):
         self.cookies.append(self.cookie0)
         self.session.cookies = self.cookies
         self.session.post.return_value = self.response
         self.response.status_code = 500
 
-        with self.assertRaises(Exception):
-            self.adapter.request({}, self.session)
+        self.assertEqual(self.adapter.request({}, self.session), None)
 
 
 if __name__ == "__main__":

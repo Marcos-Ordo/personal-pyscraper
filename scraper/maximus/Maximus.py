@@ -3,7 +3,7 @@
 import requests
 import json
 
-from scraper.Scraper                          import Scraper, ProductScraper
+from scraper.Scraper                          import Item, Scraper, ProductScraper
 from scraper.maximus.MaximusSearchingStrategy import MaximusSearchingCPUs, MaximusSearchingGPUs, MaximusSearchByMessage
 
 HOME   = "https://www.maximus.com.ar/"
@@ -12,7 +12,7 @@ class Maximus(Scraper):
     """
     Esta clase se encarga de ser el scraper de la tienda Maximus. Define 2 propiedades que utilizan sus estrategias y un metodo para elegir entre esas estrategias
     Metodo:
-        * changeStratTo(strategy): Cambia la estrategia a la estrategia dada. Recibe las estrategias "cpu", "gpu" y "msg"
+        * change_strat_to(strategy): Cambia la estrategia a la estrategia dada. Recibe las estrategias "cpu", "gpu" y "msg"
     Propiedades: 
         * adapter: Es el adaptador que mediante parametros genera respuestas de la "target website"
         * productScraper: Es un scraper de un producto individual
@@ -30,22 +30,26 @@ class Maximus(Scraper):
     def productScraper(self):
         return self.__productScraper
     
-    def changeStratTo(self, strategy):
+    def change_strat_to(self, strategy) -> None:
+        """
+        Proposito: change_strat_to(strategy): Cambia la estrategia a la estrategia dada. Recibe las estrategias "cpu", "gpu" y "msg"
+        """
         match strategy.lower():
             case "cpu": self.searchingStrategy = MaximusSearchingCPUs(self)
             case "gpu": self.searchingStrategy = MaximusSearchingGPUs(self)
             case "msg": self.searchingStrategy = MaximusSearchByMessage(self)
             case _    : pass
 
+
 class MaximusProductScraper(ProductScraper):
     """
-    Esta clase se encarga de scrapear solo 1 producto con una id dada.
-    Interfaz:
-        * scrap:
-            Proposito: scrapear la pagina del producto con la id que tiene al inicializarse una instancia.
-            Precondicion: Debe haber conexion con la "target website".
+    Esta clase se encarga de scrapear solo 1 producto con una id dada
+    Metodo:
+        * scrap: Esta función retorna un dict con todos los datos del producto apartir de la "target website", si no puede retorna None
+    Atributo:
+        * adapter: Almacena el adapter para buscar los datos
     """
-    def __init__(self, adapter):
+    def __init__(self, adapter: MaximusAdapter):
         super().__init__()
         self.__adapter = adapter
 
@@ -53,26 +57,36 @@ class MaximusProductScraper(ProductScraper):
     def adapter(self):
         return self.__adapter
 
-    def scrap(self, id):
-        # Precondicion: Solo funciona mientras sea posible conectarse a la "target website"
-        params = {
-            "item_id": id,
-        }
-        return self.adapter.request(params)
+    def scrap(self, id) -> None | Item:
+        """
+        Proposito: Esta función retorna un dict con todos los datos del producto apartir de la "target website", si no puede retorna None
+        """
+        result = self.adapter.request({'item_id': id})
+
+        if result == None:
+            return None
+        else:
+            return Item(result, 'item_id')
 
 
 class MaximusAdapter():
     """
-    Esta clase se encarga de realizar las requests para los distintos componentes del Scraper principal.
-    Interfaz:
-        * request: 
-            Proposito: Es la funcion que se encarga de crear una sesion para hacer requests, crea los headers, el payload y algunos params genericos para generar una response que despues retorna.
-            Precondicion: Debe haber conexion con la "target website".
+    Esta clase se encarga de realizar las requests para los distintos componentes del Scraper principal
+    Metodos:
+        * request(params, session = request.Session()): 
+            Proposito: Es la funcion que se encarga de crear una sesion para hacer requests, crea los headers, el payload y algunos params genericos para generar una response que despues retorna, si no puede hacer la request porque no tiene conexion o porque el json del POST queda mal retorna None
+        * __prettify_data(json_data):
+            Proposito: Esta funcion recibe los datos de la respuesta en json y los trabaja, si en esa respuesta no está el campo 'd' y dentro del campo 'd' hay un objeto json con el campo 'data' retorna None
+        * __guid(cookies):
+            Proposito: Esta funcion recibe una lista de cookies y retorna el 'guid' de la pagina en base a una de ellas, si la cookie con la 'guid' no está retorna None
     """
     def __init__(self):
         pass
 
-    def request(self, params: dict, session = requests.Session()):
+    def request(self, params: dict, session = requests.Session()) -> None | dict: # Moví la sessión aca pq necesitaba mockear la sesion fuera del metodo
+        """
+        Proposito: Es la funcion que se encarga de crear una sesion para hacer requests, crea los headers, el payload y algunos params genericos para generar una response que despues retorna, si no puede hacer la request porque no tiene conexion o porque el json del POST queda mal retorna None
+        """
         session.get(HOME)
         guid = self.__guid(session.cookies)
 
@@ -106,17 +120,17 @@ class MaximusAdapter():
             )
             code = response.status_code
             if code < 200 or code > 299:
-                raise Exception(f"networkError: {code}")
+                return None
             else:
                 input = json.loads(response.text)
                 data  = self.__prettify_data(input)
                 return(data)
         else:
-            raise Exception("scrapError: couldn't find the guid")
+            return None
     
     def __prettify_data(self, json_data) -> None | dict:
         """
-        Proposito: Esta funcion extrae los datos de la respuesta en json de la pagina, si en esa respuesta no está el campo 'd' y dentro del campo 'd' hay un objeto json con el campo 'data' retorna None
+        Proposito: Esta funcion recibe los datos de la respuesta en json y los trabaja, si en esa respuesta no está el campo 'd' y dentro del campo 'd' hay un objeto json con el campo 'data' retorna None
         """
         try:
             return json.loads(json_data['d'])['data']

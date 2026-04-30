@@ -12,20 +12,19 @@ from scraper.maximus.Maximus import MaximusProductScraper, MaximusAdapter
 class ProductScraperTest(unittest.TestCase):
 
     def setUp(self):
-        self.adapter = MaximusAdapter()
+        self.adapter = MagicMock()
         self.maximus = MaximusProductScraper(self.adapter)
     
     def test001_CuandoElProductScraperDeMaximusBuscaElItem15482_RetornaUnaRTX3050(self):
-        self.adapter.request = MagicMock(return_value = ("Placa de Video MSI Nvidia Geforce RTX 3050 Ventus 2X 6GB OC GDDR6", 0))
+        self.adapter.request.return_value = {'item_desc': "Placa de Video MSI Nvidia Geforce RTX 3050 Ventus 2X 6GB OC GDDR6"}
 
-        (name, price)   = self.maximus.scrap(15482)
-        self.assertEqual(name, "Placa de Video MSI Nvidia Geforce RTX 3050 Ventus 2X 6GB OC GDDR6")
+        item = self.maximus.scrap(15482)
+        self.assertEqual(item.value['item_desc'], "Placa de Video MSI Nvidia Geforce RTX 3050 Ventus 2X 6GB OC GDDR6") # type: ignore
     
-    def test002_CuandoElProductScraperDeMaximusBuscaUnItemQueNoEsta_RetornaUnaExcepcion(self):
-        self.adapter.request = MagicMock(side_effect = Exception)
+    def test002_CuandoElProductScraperDeMaximusBuscaUnItemQueNoEsta_RetornaNone(self):
+        self.adapter.request.return_value = None
 
-        with self.assertRaises(Exception):
-            self.maximus.scrap(0)
+        self.assertEqual(self.maximus.scrap(15482), None)
 
 if __name__ == "__main__":
     unittest.main()
