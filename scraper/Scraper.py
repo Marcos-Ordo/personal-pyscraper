@@ -5,9 +5,10 @@ class Scraper(ABC):
     Esta clase define la propiedad de la memoria de un scraper y la logica para redireccionar una busqueda:
     Metodos: 
         * search(msg): Una funcion que utiliza las distintas estrategias de cada scraper para obtener los productos de cada pagina. Utiliza un parametro para aquellas estrategias que lo necesiten
+        * change_strat_to(strategy): Es Abstracto
     Propiedades:
         * memory: Un set con los diccionarios de cada producto
-        * 
+        * searchingStrategy: Es la estrategia actual para hacer scraping
     '''
     def __init__(self):
         self.__memory            = set()

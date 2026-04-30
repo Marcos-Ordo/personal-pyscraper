@@ -7,7 +7,7 @@ PAGES = ["Maximus", "Compragamer", "ambas"]
 ## Handler:
 class Handler():
     def __init__(self):
-        self.__subscribers = []
+        self.__subscribers: list[Scraper_Adapter] = []
 
     @property
     def subscribers(self):
@@ -49,18 +49,18 @@ class Scraper_Adapter():
     
     @property
     def scraper(self):
-        return self.scraper
+        return self.__scraper
 
-    def search_gpus(self):
+    def update_search_gpus(self):
         pass
 
-    def search_cpus(self):
+    def update_search_cpus(self):
         pass
 
-    def search(self, value):
+    def update_search(self, msg):
         pass
 
-    def save(self):
+    def update_save(self):
         pass
 
 HANDLER = Handler()
@@ -115,27 +115,10 @@ class Gui(customtkinter.CTk):
         self.cpus_button = customtkinter.CTkButton(default_buttons_frame, width=100, text="Buscar CPUs", command=self.search_cpus)
         self.cpus_button.grid(row=0, column=1, padx=10)
 
-    # EVENTS
-    def on_page_load(self):
-        self.page_buttons.configure(state="disabled")
-        self.search_button.configure(state="normal")
-        self.search_entry.configure(state="normal")
-        self.gpus_button.configure(state="normal")
-        self.cpus_button.configure(state="normal")
-        self.save_button.configure(state="normal")
+    ## EVENTS
+    # None
 
-    def on_page_close(self):
-        self.page_buttons.configure(state="normal")
-        self.search_button.configure(state="disabled")
-        self.search_entry.configure(state="disabled")
-        self.gpus_button.configure(state="disabled")
-        self.cpus_button.configure(state="disabled")
-        self.save_button.configure(state="disabled")
-        self.search_entry.select_clear()
-        self.search_entry.configure(placeholder_text="Buscar ...")
-        self.page_buttons.set(value="None")
-
-    # DEFS
+    ## DEFS
     def select_page(self, page):
         pass
 

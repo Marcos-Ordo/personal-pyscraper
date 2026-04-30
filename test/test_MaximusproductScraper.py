@@ -7,9 +7,9 @@ import sys
 ruta = Path(__file__).resolve().parent.parent
 sys.path.append(str(ruta))
 
-from scraper.maximus.Maximus import MaximusProductScraper, MaximusAdapter
+from scraper.maximus.Maximus import MaximusProductScraper
 
-class ProductScraperTest(unittest.TestCase):
+class MaximusProductScraperTest(unittest.TestCase):
 
     def setUp(self):
         self.adapter = MagicMock()
