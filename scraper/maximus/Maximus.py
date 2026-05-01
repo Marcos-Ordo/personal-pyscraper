@@ -10,9 +10,10 @@ HOME   = "https://www.maximus.com.ar/"
 
 class Maximus(Scraper):
     """
-    Esta clase se encarga de ser el scraper de la tienda Maximus. Define 2 propiedades que utilizan sus estrategias y un metodo para elegir entre esas estrategias
+    Esta clase se encarga de ser el scraper de la tienda Maximus. Define 2 propiedades que utilizan sus estrategias, un metodo para elegir entre esas estrategias y un metodo para estandarizar Items en base al dict recibido por su adapter
     Metodo:
         * change_strat_to(strategy): Cambia la estrategia a la estrategia dada. Recibe las estrategias "cpu", "gpu" y "msg"
+        * standarize_item(item, product_type): Estandariza el dict dentro del item a guardar y lo etiqueta con el origen y el tipo de producto
     Propiedades: 
         * adapter: Es el adaptador que mediante parametros genera respuestas de la "target website"
         * productScraper: Es un scraper de un producto individual
@@ -32,13 +33,26 @@ class Maximus(Scraper):
     
     def change_strat_to(self, strategy) -> None:
         """
-        Proposito: change_strat_to(strategy): Cambia la estrategia a la estrategia dada. Recibe las estrategias "cpu", "gpu" y "msg"
+        Proposito: Cambia la estrategia a la estrategia dada. Recibe las estrategias "cpu", "gpu" y "msg"
         """
         match strategy.lower():
             case "cpu": self.searchingStrategy = MaximusSearchingCPUs(self)
             case "gpu": self.searchingStrategy = MaximusSearchingGPUs(self)
             case "msg": self.searchingStrategy = MaximusSearchByMessage(self)
             case _    : pass
+
+    def standarize_item(self, item, product_type):
+        """
+        Proposito: Estandariza el dict dentro del item a guardar y lo etiqueta con el origen y el tipo de producto
+        """
+        temp = {}
+        temp['id']     = item.value['item_id']
+        temp['name']   = item.value['item_desc']
+        temp['price']  = item.value['prli_price_original']
+        temp['origin'] = "Maximus"
+        temp['type']   = product_type
+        return Item(temp, 'id')
+
 
 
 class MaximusProductScraper(ProductScraper):

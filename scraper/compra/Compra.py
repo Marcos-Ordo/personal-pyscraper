@@ -8,9 +8,10 @@ from scraper.compra.CompraSearchingStrategy import CompraSearchByMessage, Compra
 
 class Compra(Scraper):
     """
-    Esta clase se encarga de ser el scraper de la tienda Compragamer. Define 2 propiedades que utilizan sus estrategias y un metodo para elegir entre esas estrategias
+    Esta clase se encarga de ser el scraper de la tienda Compragamer. Define 2 propiedades que utilizan sus estrategias, un metodo para elegir entre esas estrategias y un metodo para estandarizar Items en base al dict recibido por su adapter
     Metodo:
         * change_strat_to(strategy): Cambia la estrategia a la estrategia dada. Recibe las estrategias "cpu", "gpu" y "msg"
+        * standarize_item(item, product_type): Estandariza el dict dentro del item a guardar y lo etiqueta con el origen y el tipo de producto
     Propiedades: 
         * adapter: Es el adaptador que mediante parametros genera respuestas de la "target website"
         * productScraper: Es un scraper de un producto individual
@@ -39,6 +40,18 @@ class Compra(Scraper):
             case "gpu": self.searchingStrategy = CompraSearchingGPUs(self)
             case "msg": self.searchingStrategy = CompraSearchByMessage(self)
             case _    : pass
+
+    def standarize_item(self, item, product_type):
+        """
+        Proposito: Estandariza el dict dentro del item a guardar y lo etiqueta con el origen y el tipo de producto
+        """
+        temp = {} 
+        temp['id']     = item.value["id_producto"]
+        temp['name']   = item.value["nombre"]
+        temp['price']  = item.value["precioEspecial"]
+        temp['origin'] = "Compragamer"
+        temp['type']   = product_type
+        return Item(temp, 'id')
 
 
 class CompraProductScraper(ProductScraper):

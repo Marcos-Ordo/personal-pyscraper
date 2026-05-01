@@ -1,11 +1,13 @@
-from abc                     import ABC, abstractmethod
-from scraper.Scraper         import Item, SearchingStrategy
+from abc                       import ABC, abstractmethod
+from scraper.Scraper           import Item
+from scraper.SearchingStrategy import SearchingStrategy
 
 class MaximusSearchingStrategy(SearchingStrategy, ABC):
     """
     Esta clase abstracta define comportamientos genericos para facilitar la busqueda de sus subclases
     Metodos:
         * search(msg): Es abstracto
+        * item_type: Es abstracto
         * generic_search(func): Define la forma generica de hacer una busqueda, utilizando func para obtener las paginas con los items buscados asi extraerlos, envolverlos en Item y guardarlos en la memoria del scraper
         * generic_check_params(page, cat, bus): Define los parametros genericos para utilizar en el request del adapter
     """
@@ -14,6 +16,10 @@ class MaximusSearchingStrategy(SearchingStrategy, ABC):
 
     @abstractmethod
     def search(self, msg: str):
+        pass
+
+    @abstractmethod
+    def item_type(self) -> str:
         pass
 
     # GENERICS
@@ -25,8 +31,8 @@ class MaximusSearchingStrategy(SearchingStrategy, ABC):
         i = 1
         while len(items) > 0:
             for item in items:
-                temp = Item({k: item[k] for k in ['item_id','item_desc','prli_price_original']}, 'item_id')
-                self.scraper.memory.add(temp)
+                temp = Item({k: item[k] for k in ['item_id','item_desc','prli_price_original']}, "Maximus")
+                self.scraper.memory.add(self.scraper.standarize_item(temp, self.item_type()))
             i += 1
             items = func(i)
 
@@ -66,6 +72,9 @@ class MaximusSearchByMessage(MaximusSearchingStrategy):
             self.generic_search(lambda page: self.generic_check_params(page, -1, msg))
         else:
             pass
+    
+    def item_type(self) -> str:
+        return "Varios"
 
 
 class MaximusSearchingDefaults(MaximusSearchingStrategy):
@@ -73,6 +82,7 @@ class MaximusSearchingDefaults(MaximusSearchingStrategy):
     Esta clase define el comportamiento default para los metodos de busqueda de GPUs y CPUs
     Metodo:
         * search(): Redefine search para que lo unico que tengan que hacer sus subclases es cambiar la categoria
+        * item_type(): Define apartir del numero de categoria que item es el que va a retornar
     Atributo:
         * category: Es la categoria del tipo de producto a buscar
     """
@@ -83,6 +93,10 @@ class MaximusSearchingDefaults(MaximusSearchingStrategy):
     @property
     def category(self):
         return self.__category
+    
+    @abstractmethod
+    def item_type(self) -> str:
+        pass
 
     def search(self, msg):
         """
@@ -98,6 +112,11 @@ class MaximusSearchingCPUs(MaximusSearchingDefaults):
     def __init__(self, scraper):
         super().__init__(scraper, 52)
 
+    def item_type(self) -> str:
+        """
+        Proposito: Define el tipo de item que retorna la estrategia
+        """
+        return "Procesador"
 
 class MaximusSearchingGPUs(MaximusSearchingDefaults):
     """
@@ -105,3 +124,9 @@ class MaximusSearchingGPUs(MaximusSearchingDefaults):
     """
     def __init__(self, scraper):
         super().__init__(scraper, 48)
+
+    def item_type(self) -> str:
+        """
+        Proposito: Define el tipo de item que retorna la estrategia
+        """
+        return "Placa de video"

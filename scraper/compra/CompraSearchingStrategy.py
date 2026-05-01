@@ -1,5 +1,5 @@
-from abc             import ABC, abstractmethod
-from scraper.Scraper import SearchingStrategy
+from abc                       import ABC, abstractmethod
+from scraper.SearchingStrategy import SearchingStrategy
 
 class CompraSearchingStrategy(SearchingStrategy, ABC):
     """
@@ -18,7 +18,7 @@ class CompraSearchingStrategy(SearchingStrategy, ABC):
         if msg != None:
             for product in self.scraper.adapter.data:
                 if self.condition_hook(msg, product):
-                    self.scraper.memory.add(product)
+                    self.scraper.memory.add(self.scraper.standarize_item(product, msg))
 
     @abstractmethod
     def condition_hook(self, msg, product) -> bool:
