@@ -3,6 +3,41 @@ from queue                     import Queue
 from scraper.SearchingStrategy import EmptySearchingStrategy
 import threading
 
+class Item:
+    """
+    Esta clase es un wrapper, lo hice para que 2 items puedan compararse por igualdad, asi pueda ponerlos de forma segura en un set.
+    Es una clase sin metodos, solo tiene propiedades.
+    Propiedades:
+        * eq: define la igualdad en base a la id.
+        * hash: define como se puede hashear a un valor unico.
+        * repr: define como se representa en la terminal.
+        * id_type: define el tipo de id que va a utilizar para compararse.
+        * value: define el valor que esta envolviendo.
+    """
+    def __init__(self, value, id_type):
+        self.__id_type = id_type
+        self.__value   = value
+
+    def __eq__(self, other):
+        if not isinstance(other, Item):
+            return False
+        return self.__value[self.__id_type] == other.value[other.id_type]
+
+    def __hash__(self):
+        return hash(self.__value[self.__id_type])
+
+    def __repr__(self):
+        return f"Item({self.__value})"
+    
+    @property
+    def id_type(self):
+        return self.__id_type
+
+    @property
+    def value(self):
+        return self.__value
+
+
 class Scraper(ABC):
     '''
     Esta clase define la propiedad de la memoria de un scraper y la logica para redireccionar una busqueda:
@@ -105,38 +140,3 @@ class Memory():
         while not self.__movements.empty():
             result.append(self.__movements.get())
         return result
-
-
-class Item:
-    """
-    Esta clase es un wrapper, lo hice para que 2 items puedan compararse por igualdad, asi pueda ponerlos de forma segura en un set.
-    Es una clase sin metodos, solo tiene propiedades.
-    Propiedades:
-        * eq: define la igualdad en base a la id.
-        * hash: define como se puede hashear a un valor unico.
-        * repr: define como se representa en la terminal.
-        * id_type: define el tipo de id que va a utilizar para compararse.
-        * value: define el valor que esta envolviendo.
-    """
-    def __init__(self, value, id_type):
-        self.__id_type = id_type
-        self.__value   = value
-
-    def __eq__(self, other):
-        if not isinstance(other, Item):
-            return False
-        return self.__value[self.__id_type] == other.value[other.id_type]
-
-    def __hash__(self):
-        return hash(self.__value[self.__id_type])
-
-    def __repr__(self):
-        return f"Item({self.__value})"
-    
-    @property
-    def id_type(self):
-        return self.__id_type
-
-    @property
-    def value(self):
-        return self.__value

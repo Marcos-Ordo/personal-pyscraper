@@ -8,81 +8,6 @@ from scraper.maximus.MaximusSearchingStrategy import MaximusSearchingCPUs, Maxim
 
 HOME   = "https://www.maximus.com.ar/"
 
-class Maximus(Scraper):
-    """
-    Esta clase se encarga de ser el scraper de la tienda Maximus. Define 2 propiedades que utilizan sus estrategias, un metodo para elegir entre esas estrategias y un metodo para estandarizar Items en base al dict recibido por su adapter
-    Metodo:
-        * change_strat_to(strategy): Cambia la estrategia a la estrategia dada. Recibe las estrategias "cpu", "gpu" y "msg"
-        * standarize_item(item, product_type): Estandariza el dict dentro del item a guardar y lo etiqueta con el origen y el tipo de producto
-    Propiedades: 
-        * adapter: Es el adaptador que mediante parametros genera respuestas de la "target website"
-        * productScraper: Es un scraper de un producto individual
-    """
-    def __init__(self):
-        super().__init__()
-        self.__adapter        = MaximusAdapter()
-        self.__productScraper = MaximusProductScraper(self.adapter)
-
-    @property
-    def adapter(self):
-        return self.__adapter
-    
-    @property
-    def productScraper(self):
-        return self.__productScraper
-    
-    def change_strat_to(self, strategy) -> None:
-        """
-        Proposito: Cambia la estrategia a la estrategia dada. Recibe las estrategias "cpu", "gpu" y "msg"
-        """
-        match strategy.lower():
-            case "cpu": self.searchingStrategy = MaximusSearchingCPUs(self)
-            case "gpu": self.searchingStrategy = MaximusSearchingGPUs(self)
-            case "msg": self.searchingStrategy = MaximusSearchByMessage(self)
-            case _    : pass
-
-    def standarize_item(self, item, product_type):
-        """
-        Proposito: Estandariza el dict dentro del item a guardar y lo etiqueta con el origen y el tipo de producto
-        """
-        temp = {}
-        temp['id']     = item.value['item_id']
-        temp['name']   = item.value['item_desc']
-        temp['price']  = item.value['prli_price_original']
-        temp['origin'] = "Maximus"
-        temp['type']   = product_type
-        return Item(temp, 'id')
-
-
-
-class MaximusProductScraper(ProductScraper):
-    """
-    Esta clase se encarga de scrapear solo 1 producto con una id dada
-    Metodo:
-        * scrap: Esta función retorna un dict con todos los datos del producto apartir de la "target website", si no puede retorna None
-    Atributo:
-        * adapter: Almacena el adapter para buscar los datos
-    """
-    def __init__(self, adapter: MaximusAdapter):
-        super().__init__()
-        self.__adapter = adapter
-
-    @property
-    def adapter(self):
-        return self.__adapter
-
-    def scrap(self, id) -> None | Item:
-        """
-        Proposito: Esta función retorna un dict con todos los datos del producto apartir de la "target website", si no puede retorna None
-        """
-        result = self.adapter.request({'item_id': id})
-
-        if result == None:
-            return None
-        else:
-            return Item(result, 'item_id')
-
-
 class MaximusAdapter():
     """
     Esta clase se encarga de realizar las requests para los distintos componentes del Scraper principal
@@ -160,3 +85,78 @@ class MaximusAdapter():
             if cookie.name.startswith("GBP_") and cookie.name != "GBP_":
                 return cookie.name.replace("GBP_", "")
         return None
+
+
+class Maximus(Scraper):
+    """
+    Esta clase se encarga de ser el scraper de la tienda Maximus. Define 2 propiedades que utilizan sus estrategias, un metodo para elegir entre esas estrategias y un metodo para estandarizar Items en base al dict recibido por su adapter
+    Metodo:
+        * change_strat_to(strategy): Cambia la estrategia a la estrategia dada. Recibe las estrategias "cpu", "gpu" y "msg"
+        * standarize_item(item, product_type): Estandariza el dict dentro del item a guardar y lo etiqueta con el origen y el tipo de producto
+    Propiedades: 
+        * adapter: Es el adaptador que mediante parametros genera respuestas de la "target website"
+        * productScraper: Es un scraper de un producto individual
+    """
+    def __init__(self):
+        super().__init__()
+        self.__adapter        = MaximusAdapter()
+        self.__productScraper = MaximusProductScraper(self.adapter)
+
+    @property
+    def adapter(self):
+        return self.__adapter
+    
+    @property
+    def productScraper(self):
+        return self.__productScraper
+    
+    def change_strat_to(self, strategy) -> None:
+        """
+        Proposito: Cambia la estrategia a la estrategia dada. Recibe las estrategias "cpu", "gpu" y "msg"
+        """
+        match strategy.lower():
+            case "cpu": self.searchingStrategy = MaximusSearchingCPUs(self)
+            case "gpu": self.searchingStrategy = MaximusSearchingGPUs(self)
+            case "msg": self.searchingStrategy = MaximusSearchByMessage(self)
+            case _    : pass
+
+    def standarize_item(self, item, product_type):
+        """
+        Proposito: Estandariza el dict dentro del item a guardar y lo etiqueta con el origen y el tipo de producto
+        """
+        temp = {}
+        temp['id']     = item.value['item_id']
+        temp['name']   = item.value['item_desc']
+        temp['price']  = item.value['prli_price_original']
+        temp['origin'] = "Maximus"
+        temp['type']   = product_type
+        return Item(temp, 'id')
+
+
+
+class MaximusProductScraper(ProductScraper):
+    """
+    Esta clase se encarga de scrapear solo 1 producto con una id dada
+    Metodo:
+        * scrap: Esta función retorna un dict con todos los datos del producto apartir de la "target website", si no puede retorna None
+    Atributo:
+        * adapter: Almacena el adapter para buscar los datos
+    """
+    def __init__(self, adapter: MaximusAdapter):
+        super().__init__()
+        self.__adapter = adapter
+
+    @property
+    def adapter(self):
+        return self.__adapter
+
+    def scrap(self, id) -> None | Item:
+        """
+        Proposito: Esta función retorna un dict con todos los datos del producto apartir de la "target website", si no puede retorna None
+        """
+        result = self.adapter.request({'item_id': id})
+
+        if result == None:
+            return None
+        else:
+            return Item(result, 'item_id')
