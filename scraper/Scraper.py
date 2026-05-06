@@ -49,9 +49,14 @@ class Scraper(ABC):
         * memory: Es un Memory con los diccionarios de cada producto
         * searchingStrategy: Es la estrategia actual para hacer scraping
     '''
-    def __init__(self):
+    def __init__(self, name):
         self.__memory            = Memory()
         self.__searchingStrategy = EmptySearchingStrategy(self)
+        self.__name              = name
+
+    @property
+    def name(self):
+        return self.__name
 
     @property
     def memory(self):
@@ -65,8 +70,14 @@ class Scraper(ABC):
     def searchingStrategy(self, strategy):
         self.__searchingStrategy = strategy
 
-    def search(self, msg = None):
-        self.searchingStrategy.search(msg)
+    def __eq__(self, value: object) -> bool:
+        return isinstance(value, Scraper) and self.name == value.name
+    
+    def __hash__(self):
+        return hash(self.name)
+
+    def search(self, msg = None, filter = None):
+        self.searchingStrategy.search(msg, filter)
 
     @abstractmethod
     def change_strat_to(self, strategy) -> None:
@@ -116,7 +127,6 @@ class Memory():
     """
     def __init__(self):
         self.__history   = set()
-        self.__movements = Queue()
         self.__lock      = threading.Lock()
 
     @property
@@ -130,13 +140,12 @@ class Memory():
         with self.lock:
             if x not in self.__history:
                 self.__history.add(x)
-                self.__movements.put(x)
     
     def get(self):
         """
         Proposito: Retorna todos los movimientos disponibles dejando sin movimientos la memoria
         """
         result = []
-        while not self.__movements.empty():
-            result.append(self.__movements.get())
+        for x in self.__history:
+            result.append(x)
         return result

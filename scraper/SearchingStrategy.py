@@ -16,7 +16,7 @@ class SearchingStrategy(ABC):
         return self.__scraper
 
     @abstractmethod
-    def search(self, msg):
+    def search(self, msg, filter):
         pass
 
 
@@ -27,5 +27,5 @@ class EmptySearchingStrategy(SearchingStrategy):
     def __init__(self, scraper):
         super().__init__(scraper)
 
-    def search(self, msg):
+    def search(self, msg, filter):
         pass

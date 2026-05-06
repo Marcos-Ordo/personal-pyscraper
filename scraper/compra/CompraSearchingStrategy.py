@@ -11,7 +11,7 @@ class CompraSearchingStrategy(SearchingStrategy, ABC):
     def __init__(self, scraper):
         super().__init__(scraper)
     
-    def search(self, msg: str):
+    def search(self, msg: str, filter): ## TODO, implement filters!
         """
         Proposito: Este metodo se encarga de buscar por todo el data del adapter los productos que cumplan con el hook para guardarlos en la memoria del scraper
         """
@@ -60,11 +60,11 @@ class CompraSearchingCPUs(CompraSearchingDefaults):
     Metodo:
         * search(): Se redefine para que utilice el search() de su superclase con el mensaje "Procesador"
     """
-    def search(self, msg):
+    def search(self, msg, filter):  ## TODO, implement filters!
         """
         Proposito: Se redefine para que utilice el search() de su superclase con el mensaje "Procesador"
         """
-        super().search("Procesador")
+        super().search("Procesador", filter)
 
 
 class CompraSearchingGPUs(CompraSearchingDefaults):
@@ -73,8 +73,8 @@ class CompraSearchingGPUs(CompraSearchingDefaults):
     Metodo:
         * search(): Se redefine para que utilice el search() de su superclase con el mensaje "Placa de video"
     """
-    def search(self, msg):
+    def search(self, msg, filter):  ## TODO, implement filters!
         """
         Proposito: Se redefine para que utilice el search() de su superclase con el mensaje "Placa de video".
         """
-        super().search("Placa de Video")
+        super().search("Placa de Video", filter)

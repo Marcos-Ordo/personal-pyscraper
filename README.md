@@ -5,3 +5,4 @@ Pyscraper es un web scraper desarrollado en python, la hice para uso personal pa
 Requiere los modulos:
     *** requests
     *** customtkinter
+    *** flask

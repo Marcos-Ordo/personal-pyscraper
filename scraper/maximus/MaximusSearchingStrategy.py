@@ -15,7 +15,7 @@ class MaximusSearchingStrategy(SearchingStrategy, ABC):
         super().__init__(scraper)
 
     @abstractmethod
-    def search(self, msg: str):
+    def search(self, msg: str, filter):  ## TODO, implement filters!
         pass
 
     @abstractmethod
@@ -64,7 +64,7 @@ class MaximusSearchByMessage(MaximusSearchingStrategy):
     def __init__(self, scraper):
         super().__init__(scraper)
 
-    def search(self, msg = None):
+    def search(self, msg = None, filter = None):  ## TODO, implement filters!
         """
         Proposito: Redefine search pasando msg como parametro
         """
@@ -98,7 +98,7 @@ class MaximusSearchingDefaults(MaximusSearchingStrategy):
     def item_type(self) -> str:
         pass
 
-    def search(self, msg):
+    def search(self, msg, filter):  ## TODO, implement filters!
         """
         Proposito: Redefine search para que lo unico que tengan que hacer sus subclases es cambiar la categoria
         """

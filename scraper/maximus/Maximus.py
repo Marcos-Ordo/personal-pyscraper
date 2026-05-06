@@ -98,7 +98,7 @@ class Maximus(Scraper):
         * productScraper: Es un scraper de un producto individual
     """
     def __init__(self):
-        super().__init__()
+        super().__init__("Maximus")
         self.__adapter        = MaximusAdapter()
         self.__productScraper = MaximusProductScraper(self.adapter)
 
@@ -128,7 +128,7 @@ class Maximus(Scraper):
         temp['id']     = item.value['item_id']
         temp['name']   = item.value['item_desc']
         temp['price']  = item.value['prli_price_original']
-        temp['origin'] = "Maximus"
+        temp['origin'] = self.name
         temp['type']   = product_type
         return Item(temp, 'id')
 

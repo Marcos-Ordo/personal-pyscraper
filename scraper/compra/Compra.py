@@ -72,7 +72,7 @@ class Compra(Scraper):
         * productScraper: Es un scraper de un producto individual
     """
     def __init__(self):
-        super().__init__()
+        super().__init__("Compragamer")
         self.__adapter        = CompraAdapter()
         self.__productScraper = CompraProductScraper(self.__adapter)
 
@@ -104,7 +104,7 @@ class Compra(Scraper):
         temp['id']     = item.value["id_producto"]
         temp['name']   = item.value["nombre"]
         temp['price']  = item.value["precioEspecial"]
-        temp['origin'] = "Compragamer"
+        temp['origin'] = self.name
         temp['type']   = product_type
         return Item(temp, 'id')
 
