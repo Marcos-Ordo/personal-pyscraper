@@ -1,6 +1,12 @@
 from flask      import Flask, request, send_from_directory
 from flask_cors import CORS
+import sys
 import os
+
+if getattr(sys, 'frozen', False):
+    base = sys._MEIPASS # type: ignore
+else:
+    base = os.path.abspath(".")
 
 from scraper import *
 
@@ -53,7 +59,9 @@ class Interpreter():
 
         return result
 
-app = Flask(__name__, static_folder="../website/dist", static_url_path="")
+app = Flask(__name__, 
+            static_folder=os.path.join(base, "website/dist"),
+            static_url_path="")
 CORS(app)
 
 @app.route("/")

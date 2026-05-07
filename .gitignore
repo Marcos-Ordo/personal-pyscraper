@@ -1,2 +1,8 @@
+# Python extra files
 .venv
 __pycache__
+
+# Pyinstaller things
+build
+dist
+app.spec
