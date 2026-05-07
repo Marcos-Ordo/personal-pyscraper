@@ -125,7 +125,7 @@ class Maximus(Scraper):
         Proposito: Estandariza el dict dentro del item a guardar y lo etiqueta con el origen y el tipo de producto
         """
         temp = {}
-        temp['id']     = item.value['item_id']
+        temp['id']     = '00-'+str(item.value['item_id'])
         temp['name']   = item.value['item_desc']
         temp['price']  = item.value['prli_price_original']
         temp['origin'] = self.name

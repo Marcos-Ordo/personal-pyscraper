@@ -101,9 +101,9 @@ class Compra(Scraper):
         Proposito: Estandariza el dict dentro del item a guardar y lo etiqueta con el origen y el tipo de producto
         """
         temp = {} 
-        temp['id']     = item.value["id_producto"]
+        temp['id']     = '01-'+str(item.value["id_producto"])
         temp['name']   = item.value["nombre"]
-        temp['price']  = item.value["precioEspecial"]
+        temp['price']  = float(item.value["precioEspecial"])
         temp['origin'] = self.name
         temp['type']   = product_type
         return Item(temp, 'id')

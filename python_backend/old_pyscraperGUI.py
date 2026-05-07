@@ -61,7 +61,6 @@ class Gui(ctk.CTk):
         self.__handler = Handler()
 
         self.title("pyscraper")
-        self.tk.call('wm', 'iconphoto', self, tk.PhotoImage(file='images/github-icon.png'))
         self.geometry("700x450")
         self.check_var = ctk.BooleanVar(value=True)
 

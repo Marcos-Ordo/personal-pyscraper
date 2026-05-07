@@ -1,5 +1,6 @@
-from flask import Flask, request
+from flask      import Flask, request, send_from_directory
 from flask_cors import CORS
+import os
 
 from scraper import *
 
@@ -52,17 +53,21 @@ class Interpreter():
 
         return result
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../website/dist", static_url_path="")
 CORS(app)
+
+@app.route("/")
+def index():
+    return send_from_directory(app.static_folder, "index.html") # type: ignore
 
 @app.route('/products', methods=['GET'])
 def products():
     it = Interpreter()
 
-    it.handle(request.args.get('websites', '').split(',')
-                     , request.args.getlist('flags')
-                     , request.args.get('query', None)
-                     , None)
+    it.handle(request.args.getlist('websites')
+            , request.args.getlist('flags')
+            , request.args.get('query', None)
+            , None)
     
     return it.get_memory()
 
@@ -70,9 +75,12 @@ def products():
 def query_products(category):
     it = Interpreter()
 
-    it.handle(request.args.get('websites', '').split(',')
-                     , request.args.getlist('flags')
-                     , request.args.get('query', None)
-                     , category)
+    it.handle(request.args.getlist('websites')
+            , request.args.getlist('flags')
+            , request.args.get('query', None)
+            , category)
     
     return it.get_memory()
+
+if __name__ == "__main__":
+    app.run()
